@@ -14,10 +14,8 @@ export class HeroesComponent implements OnInit {
   selectedHero: Hero;
   heroes: Hero[];
 
-  constructor(
-    private router: Router,
-    private heroService: HeroService
-  ) {
+  constructor(private router: Router,
+              private heroService: HeroService) {
   }
 
   ngOnInit() {
@@ -31,6 +29,29 @@ export class HeroesComponent implements OnInit {
 
   onSelect(hero: Hero) {
     this.selectedHero = hero;
+  }
+
+  add(name: string): void {
+    name = name.trim();
+    if (!name) {
+      return
+    }
+    this.heroService.create(name)
+      .then(hero => {
+        this.heroes.push(hero);
+        this.selectedHero = null;
+      });
+  }
+
+  remove(hero: Hero): void {
+    this.heroService
+      .remove(hero.id)
+      .then(() => {
+        this.heroes = this.heroes.filter(h => h !== hero);
+        if (this.selectedHero === hero) {
+          this.selectedHero = null;
+        }
+      });
   }
 
   gotoDetail(): void {
